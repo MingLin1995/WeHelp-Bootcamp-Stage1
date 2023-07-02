@@ -1,4 +1,4 @@
-# WeHelpBootcamp-Stage1
+# WeHelp-Bootcamp-Stage1
 
 第一週任務公告
 
