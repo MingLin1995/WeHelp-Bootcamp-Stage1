@@ -1,3 +1,5 @@
+#https://minglin1995.github.io/WeHelp-Bootcamp-Stage1/Week1/index.html
+
 第一週任務公告
 
 歡迎大家加入 WeHelp 第四屆的訓練。廢話不多，本週，要求你運用任何學習過的 HTML、CSS 技巧，完成 RWD 網頁切版。詳情請參考說明和附件。
