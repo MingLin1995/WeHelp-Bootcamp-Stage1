@@ -63,6 +63,7 @@ body{
     width: 1920px;
     margin: 0 auto;
     font-size: 20px;
+    font-family: 'Times New Roman', Times, serif
 }
 
 @media (max-width:1920px) {
@@ -88,7 +89,10 @@ body{
 .title{
     display: flex;
     justify-content: space-between;
-    padding: 10px 0px 10px 20px;
+    padding: 10px 0px 10px 10px; /* 範例檔跟邊界有點空間 */
+}
+.title div{
+    font-weight: bold;
 }
 .item{
     display: flex;
@@ -104,11 +108,16 @@ body{
     display: none; 
 }
 @media (max-width:600px) {
+    .title{
+        display: flex;
+        align-items: center;
+    }
 	.item{
 		display: none; 
 	}
     .icon{
         display: inline; 
+        padding-right: 10px;
     }
 
 }
@@ -120,7 +129,14 @@ body{
     height: 250px;
     font-size: 40px;
     background-color: #cff5f8;
+    font-weight: bold;
 }
+
+@media (max-width:600px) {
+    .welcome{
+        font-size: 30px; /* 原本40px，低於470會跳行，所以縮小一點 */
+    }
+} 
 
 /*************************content-top************************/
 .content{
