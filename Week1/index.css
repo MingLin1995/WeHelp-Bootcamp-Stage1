@@ -57,7 +57,7 @@ img{
 }
 /******************** CSS RESET ********************/
 
-*{outline:1px solid red} 
+/* *{outline:1px solid red} */ 
 
 body{
     width: 1920px;
@@ -72,6 +72,12 @@ body{
 }
 
 @media (max-width:1200px) {
+	body{
+		width: 90%; 
+	}
+}
+
+@media (max-width:600px) {
 	body{
 		width: 90%; 
 	}
@@ -93,6 +99,18 @@ body{
 .item a{
     text-decoration: none;
     color: black;
+}
+.icon{
+    display: none; 
+}
+@media (max-width:600px) {
+	.item{
+		display: none; 
+	}
+    .icon{
+        display: inline; 
+    }
+
 }
 /*************************welcome************************/
 .welcome {
@@ -142,10 +160,27 @@ body{
         flex-wrap: wrap;
     }
 
-    .Promotion3{
+    .Promotion:nth-child(2){ /* 選擇第二個元素 */
+        margin-right: 0;
+    }
+    /*.Promotion:not(:first-child){  另一種寫法
+        margin-right: 0;
+    }*/
+
+    .Promotion:nth-child(3){
         width: 100%;
         margin-top: 20px;
     }
+}
+@media (max-width:600px) {
+	.Promotion{
+        width: 100%;
+        margin-top: 20px;
+    }
+    .Promotion:not(:last-child) {
+        margin-right: 0px;
+    }
+
 }
 
 /*************************content-main************************/
@@ -156,15 +191,28 @@ body{
     margin-bottom: 20px;
 }
 .main{
-    width: 183.3335px;
+    width: 183px; /*(1200-20*2)/3=386.6667;(386.6667-20)/2=183.333*/
     margin-top: 20px;
     display: flex;
-    flex-direction: column /* 圖片與文字段落貼合，不會留空白 */
+    flex-direction: column; /* 讓圖片與文字段落貼合，不會留空白 */
 }
+
 .main p{
     background-color: #cff5f8;
     text-align: center;
     padding: 10px;
+}
+
+@media (max-width:1200px) {
+	.main{
+        width: 24%; /*1200*0.9=1080;1080-20*3=1020;1020/4=255;255/1080=23.61%*/
+	}
+}
+
+@media (max-width:600px) {
+    .main{
+        width: 100%;
+	}
 }
 
 
