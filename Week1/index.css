@@ -91,7 +91,7 @@ body{
 
 .content{
     width: 1200px;
-    margin: 0 auto;
+    margin: 40px auto 0px auto;
 }
 
 .content-top{
@@ -102,6 +102,7 @@ body{
 .Promotion{
     display: flex;
     height: 50px;
+    flex-grow: 1;
 }
 .Promotion:not(:last-child) {
     margin-right: 20px;
@@ -112,6 +113,7 @@ body{
 .Promotion p{
     background-color: #cff5f8;
     width: auto; /*(1200-80*3-20*2)/3=306.6667*/
+    flex-grow: 1;
 }
 
 
