@@ -56,7 +56,8 @@ img{
     box-sizing:border-box;
 }
 /******************** CSS RESET ********************/
-*{outline:1px solid red}
+
+*{outline:1px solid red} 
 
 body{
     width: 1920px;
@@ -64,6 +65,20 @@ body{
     font-size: 20px;
 }
 
+@media (max-width:1920px) {
+	body{
+		width: 100%; 
+	}
+}
+
+@media (max-width:1200px) {
+	body{
+		width: 90%; 
+	}
+}
+
+
+/*************************title************************/
 .title{
     display: flex;
     justify-content: space-between;
@@ -79,7 +94,7 @@ body{
     text-decoration: none;
     color: black;
 }
-
+/*************************welcome************************/
 .welcome {
     display: flex;
     justify-content: center;
@@ -89,6 +104,7 @@ body{
     background-color: #cff5f8;
 }
 
+/*************************content-top************************/
 .content{
     width: 1200px;
     margin: 40px auto 0px auto;
@@ -100,20 +116,57 @@ body{
 }
 
 .Promotion{
-    display: flex;
     height: 50px;
-    flex-grow: 1;
+    display: flex;
+    flex-grow: 1; /* 讓容器內空間盡可能填滿 */
 }
-.Promotion:not(:last-child) {
+.Promotion:not(:last-child) { /* 排除最後一個元素 */
     margin-right: 20px;
 }
 .Promotion img{
     width: 80px;
 }
 .Promotion p{
+    display: flex;
+    align-items: center;
     background-color: #cff5f8;
-    width: auto; /*(1200-80*3-20*2)/3=306.6667*/
-    flex-grow: 1;
+    flex-grow: 1; /* 讓容器內空間盡可能填滿 */
 }
+
+@media (max-width:1200px) {
+	.content{
+		width: 90%; 
+	}
+
+    .content-top{
+        flex-wrap: wrap;
+    }
+
+    .Promotion3{
+        width: 100%;
+        margin-top: 20px;
+    }
+}
+
+/*************************content-main************************/
+.content-main{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.main{
+    width: 183.3335px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column /* 圖片與文字段落貼合，不會留空白 */
+}
+.main p{
+    background-color: #cff5f8;
+    text-align: center;
+    padding: 10px;
+}
+
+
 
 
