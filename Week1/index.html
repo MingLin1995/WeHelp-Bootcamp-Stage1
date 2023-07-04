@@ -20,8 +20,19 @@
             <li><a href="#">item 4</a></li>
         </ul>
 
-        <img src="icon.png" alt="漢堡圖示" class="icon" >
+        <div id="mySidepanel" class="sidepanel">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a> 
+            <!-- href="javascript:void(0)" 是一種特殊的超連結寫法，它在點擊時不會執行任何具體的動作或導向到其他頁面。通常在需要在點擊時觸發 JavaScript 函式或事件時使用此寫法。 -->
+            <a href="#">item 1</a>
+            <a href="#">item 2</a>
+            <a href="#">item 3</a>
+            <a href="#">item 4</a>
+        </div>
 
+        <button class="openbtn" onclick="openNav()">
+            <img src="icon.png" alt="漢堡圖示" class="icon" >
+        </button>
+        
     </div>
     
     <div class="welcome">
@@ -112,6 +123,6 @@
         
 
     </div> 
-    
+    <script src="index.js"></script>
 </body>
 </html>

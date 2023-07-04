@@ -104,22 +104,38 @@ body{
     text-decoration: none;
     color: black;
 }
-.icon{
+/* .icon{
+    display: none; 
+} */
+
+.openbtn{ /* 7/4修改的 */
     display: none; 
 }
+.sidepanel{ /* 7/4修改的 */
+    display: none;
+}
+
 @media (max-width:600px) {
     .title{
         display: flex;
         align-items: center;
+        position: relative;/* 7/4新增 */
     }
 	.item{
 		display: none; 
 	}
-    .icon{
+    /* .icon{
+        display: inline; 
+        padding-right: 10px;
+    } */
+    .openbtn{
         display: inline; 
         padding-right: 10px;
     }
-
+    .sidepanel{ /* 7/4修改的 */
+        display: block;
+        overflow-x: hidden; /* 如果容器內容的寬度超過容器本身的寬度，則超出部分將被隱藏，不會顯示在容器內 */
+    }
 }
 /*************************welcome************************/
 .welcome {
@@ -212,10 +228,13 @@ body{
     display: flex;
     flex-direction: column; /* 讓圖片與文字段落貼合，不會留空白 */
     position: relative; /* 外層容器設置為相對定位 */
+    background-image: url("text.jpg");
+    background-size: cover; /* 填滿容器 */
+    background-position: center;
 }
 
 .main p{
-    background-color: #cff5f8;
+    background-color: rgba(255, 255, 255, 0.5); /* 透明度為 50% 的黑色背景 */
     text-align: center;
     padding: 10px;
 }
@@ -226,6 +245,7 @@ body{
     top: 0px; 
     right:0px; 
 }
+
 
 @media (max-width:1200px) {
 	.main{
@@ -240,6 +260,52 @@ body{
 
     
 }
+/* --------------------------------- */
+.sidepanel  {
+    width: 0px;
+    position:absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 1;
+    height: 250px; /* 展開後的高度 */
+    background-color: #111;
+    padding-top: 60px;
+    font-size: 20px;
+  }
+  
+  .sidepanel a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none; /* 不要底線 */
+    font-size: 25px;
+    color: #818181;
+    display: block;
+  }
+  
+  .sidepanel a:hover { /* 滑鼠移入 */
+    color: #f1f1f1;
+  }
+  
+  .sidepanel .closebtn {
+    position: absolute; /* 絕對定位 */
+    top: 0;
+    right: 0px;
+    font-size: 10px;
+    display: none;
+  }
+  
+  .openbtn {
+    position:absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 25px;
+    color: rgb(238, 15, 15);
+    border: none;/* 取消邊框 */
+  }
+  
+  .openbtn:hover {
+    background-color:#444; /* 滑鼠移入 */
+  }
 
 
 
