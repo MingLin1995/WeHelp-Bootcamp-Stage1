@@ -211,12 +211,20 @@ body{
     margin-top: 20px;
     display: flex;
     flex-direction: column; /* 讓圖片與文字段落貼合，不會留空白 */
+    position: relative; /* 外層容器設置為相對定位 */
 }
 
 .main p{
     background-color: #cff5f8;
     text-align: center;
     padding: 10px;
+}
+
+.main .img2 {
+    width: 40px;
+    position:absolute; /* 以父層元素(main)的位置為定位 */
+    top: 0px; 
+    right:0px; 
 }
 
 @media (max-width:1200px) {
@@ -229,6 +237,8 @@ body{
     .main{
         width: 100%;
 	}
+
+    
 }
 
 
