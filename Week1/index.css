@@ -268,7 +268,7 @@ body{
     right: 0px;
     z-index: 1;
     height: 250px; /* 展開後的高度 */
-    background-color: #111;
+    background-color: white;
     padding-top: 60px;
     font-size: 20px;
   }
@@ -299,12 +299,11 @@ body{
     right: 10px;
     width: 30px;
     height: 25px;
-    color: rgb(238, 15, 15);
     border: none;/* 取消邊框 */
   }
   
   .openbtn:hover {
-    background-color:#444; /* 滑鼠移入 */
+    background-color:#818181; /* 滑鼠移入 */
   }
 
 
