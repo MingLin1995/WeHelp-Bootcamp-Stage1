@@ -1,5 +1,6 @@
-任務目標：運用程式語言解決問題。
+#https://minglin1995.github.io/WeHelp-Bootcamp-Stage1/Week2/Task.html
 
+任務目標：運用程式語言解決問題。
 
 成果形式：請繼續使用第一週建立的 GitHub Repository。額外建立一個子資料夾 week2，將所有本週任務相關的程式檔案都放進 week2 子資料夾中。
 
