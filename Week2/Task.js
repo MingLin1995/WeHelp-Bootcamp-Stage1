@@ -223,3 +223,50 @@ function getNumber(index) {
 getNumber(1); // print 4
 getNumber(5); // print 10
 getNumber(10); // print 15
+
+console.log("----------------------------Task5-------------------------------");
+function findIndexOfCar(seats, status, number) {
+  // your code here
+  /*
+  1.找出買票人數
+  2.找出那些車廂的狀態是可以買票的
+  3.找出可以坐的車廂的座位數(可以用狀態的index去對應車廂座位數)
+  4.判斷車廂空位有沒有大於等於買票人數(有的話繼續往下判斷)
+  5.找出所有符合買票人數的車廂(跟買票人數相減，取最小的)
+  6.找出最適合的車廂(印出index)
+  */
+
+  let statusOK = [];
+  let n = 0;
+  for (statusIndividual of status) {
+    if (statusIndividual == 1) {
+      statusOK.push(n);
+      n += 1;
+    } else {
+      n += 1;
+    }
+  }
+
+  let seatsOK = [];
+  for (remainingAmount of statusOK) {
+    if (seats[remainingAmount] >= number) {
+      seatsOK.push(remainingAmount);
+    }
+  }
+
+  if (seatsOK.length == 0) {
+    console.log("-1");
+    return;
+  }
+
+  let bestSeat = [];
+  for (seatDifference in seatsOK) {
+    bestSeat.push(seats[seatsOK[seatDifference]] - number);
+  }
+
+  console.log(`最佳解${seatsOK[bestSeat.indexOf(Math.min(...bestSeat))]}`);
+}
+
+findIndexOfCar([3, 1, 5, 4, 2], [0, 1, 0, 1, 1], 2); // print 4
+findIndexOfCar([1, 0, 5, 1, 3], [0, 1, 0, 1, 1], 4); // print -1
+findIndexOfCar([4, 6, 5, 8], [0, 1, 1, 1], 4); // print 2

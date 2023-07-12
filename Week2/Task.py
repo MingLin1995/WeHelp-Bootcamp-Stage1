@@ -202,3 +202,59 @@ def get_number(index):
 get_number(1)  # print 4
 get_number(5)  # print 10
 get_number(10)  # print 15
+
+print('----------------------------Task5-------------------------------')
+
+
+def find_index_of_car(seats, status, number):
+    # your code here
+    """ 
+    1.找出買票人數
+    2.找出那些車廂的狀態是可以買票的
+    3.找出可以坐的車廂的座位數(可以用狀態的index去對應車廂座位數)
+    4.判斷車廂空位有沒有大於等於買票人數(有的話繼續往下判斷)
+    5.找出所有符合買票人數的車廂(跟買票人數相減，取最小的)
+    6.找出最適合的車廂(印出index)
+    """
+    # print(seats) #找出值
+    # print(status[4]) #找出"值"的index
+    statusOK = []  # 用來儲存狀態ok的車廂的index
+    n = 0
+    for statusIndividual in status:
+        # print(statusIndividual) #個別狀態取出判斷
+        if (statusIndividual == 1):
+            # print(f'可以乘坐的車廂index為{n}')
+            statusOK.append(n)
+            n += 1
+        else:
+            n += 1
+    # print(statusOK)
+
+    seatsOK = []  # 用來儲存空位符合買票人數的車廂的index
+    for remainingAmount in statusOK:
+        # print(remainingAmount) #可以買票的車廂index
+        # print(seats[remainingAmount]) #個別空位數
+        if (seats[remainingAmount] >= number):  # 空位數大於買票人數
+            # print("可以買票")
+            seatsOK.append(remainingAmount)
+
+    if not seatsOK:  # if not 用來檢查一個資料集合，如列表、字典，是否為空
+        print("-1")
+        return  # 用來結束函式
+
+    bestSeat = []  # 所有符合條件的車廂的差異數(車廂空位數-買票人數)
+    for seatDifference in seatsOK:
+        # print(seats[seatDifference]-number[0])  # 車廂空位數-買票人數
+        bestSeat.append(seats[seatDifference]-number)
+    # print(bestSeat) #差異數
+    # print(min(bestSeat)) #取差異樹的最小值(代表最符合條件)
+    # print(bestSeat.index(min(bestSeat))) #透過差異數，找出index
+
+    # seatsOK的index會跟bestSeat的index對應
+    # 最佳解[可以買票且符合人數的車廂index]
+    print(f'最佳解{seatsOK[bestSeat.index(min(bestSeat))]}')
+
+
+find_index_of_car([3, 1, 5, 4, 2], [0, 1, 0, 1, 1], 2)  # print 4
+find_index_of_car([1, 0, 5, 1, 3], [0, 1, 0, 1, 1], 4)  # print -1
+find_index_of_car([4, 6, 5, 8], [0, 1, 1, 1], 4)  # print 2
