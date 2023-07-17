@@ -137,7 +137,5 @@ for item in ans:
 with open(mrt, 'w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
     for MRT, stitles in mrt_dict.items():
-        # 如果MRT為None就改為附近沒有捷運站
-        if MRT is None:
-            MRT = "附近沒有捷運站"
-        writer.writerow([MRT] + stitles)  # [建立一個列表]+列表連接起來
+        if MRT is not None:  # 如果MRT不是None才會寫入
+            writer.writerow([MRT] + stitles)  # [建立一個列表]+列表連接起來
