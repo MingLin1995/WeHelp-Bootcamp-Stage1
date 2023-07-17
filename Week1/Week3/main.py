@@ -73,9 +73,8 @@ for result in results:
     n += 1
 print(n) """
 
-# 把資料全部統整成字典
+# 把資料全部統整起來
 ans = []
-ans2 = []
 results = parsed_data['result']['results']
 for result in results:
     stitle = result['stitle']
