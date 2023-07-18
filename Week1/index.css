@@ -254,6 +254,7 @@ body {
   height: 50px;
   display: flex;
   flex-grow: 1; /* 讓容器內空間盡可能填滿 */
+
   /* 7/17更新 JS帶入文字後讓三個寬度等寬 */
   flex-basis: 33.33%;
 }
@@ -297,7 +298,7 @@ body {
   .Promotion {
     width: 100%;
     margin-top: 20px;
-    /* 7/17更新 避免跑版 */
+    /* 7/17更新 避免跑版(壓縮一起) */
     flex-basis: 100%;
   }
   .Promotion:not(:last-child) {
@@ -319,12 +320,12 @@ body {
   flex-direction: column; /* 讓圖片與文字段落貼合，不會留空白 */
   position: relative; /* 外層容器設置為相對定位 */
 
-  overflow: hidden;
+  overflow: hidden; /* 7/17 隱藏圖片溢出的部分 */
 }
 
 .main .img1 {
   height: 120px;
-  object-fit: cover;
+  object-fit: cover; /* 7/17 填滿容器保持長寬比 */
 }
 
 .main .img3 {
@@ -358,6 +359,7 @@ body {
   .main {
     width: 24%; /*1200*0.9=1080;1080-20*3=1020;1020/4=255;255/1080=23.61%*/
   }
+  /* 7/17 */
   .main .img1 {
     height: 169.37px;
   }
@@ -366,6 +368,7 @@ body {
   }
 }
 
+/* 7/17 */
 @media (max-width: 850px) {
   .main .img1 {
     height: 118px;
@@ -375,6 +378,7 @@ body {
   }
 }
 
+/* 7/17 */
 @media (max-width: 700px) {
   .main .img1 {
     height: 91px;
@@ -388,6 +392,7 @@ body {
   .main {
     width: 100%;
   }
+  /* 7/17 */
   .main .img1 {
     height: 253.49px;
   }
