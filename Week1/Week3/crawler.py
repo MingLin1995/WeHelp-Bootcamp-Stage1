@@ -5,8 +5,10 @@
 4.透過篩選後的文章標題，找出超連結，進入後取出發佈時間
 5.透過函式回傳功能，達到換頁的功能
 """
-import bs4
+import time
 import urllib.request as req
+import bs4
+start_time = time.time()  # 開始時間
 
 
 def get_data(url):
@@ -121,6 +123,7 @@ all_articles = []
 # 抓取三頁
 pageURL = "https://www.ptt.cc/bbs/movie/index.html"
 count = 0
+
 while count < 3:
     nextLink, articles_data = get_data(pageURL)  # 關鍵字：多重賦值用法，回傳兩個值用,隔開
 
@@ -140,3 +143,6 @@ with open("movie.txt", "w", encoding="utf-8") as file:
     for article in all_articles:
         file.write(article["文章標題"] + "," +
                    str(article["推文數"]) + "," + article["發佈時間"] + "\n")
+
+end_time = time.time()
+print(f"花了{end_time - start_time} 秒爬取資料")
