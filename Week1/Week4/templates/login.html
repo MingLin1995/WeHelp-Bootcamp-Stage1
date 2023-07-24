@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登入頁面</title>
+    <!-- 前端開發的 javascript 與 css 檔案必須放在 static 資料夾才會生效。-->
+    <link rel="stylesheet" href="../static/RESET.css" />
+    <link rel="stylesheet" href="../static/login.css" />
+  </head>
+  <body>
+    <div class="content">
+      <div class="title">
+        <h1>歡迎光臨，請輸入帳號密碼</h1>
+      </div>
+
+      <div class="login">
+        <h2>登入系統</h2>
+        <!-- https://ithelp.ithome.com.tw/m/articles/10262142 -->
+        <!-- https://www.ewdna.com/2009/06/formonsubmitsubmit.html -->
+        <!-- onsubmit 提交表單時，要執行的JS -->
+        <form method="post" action="/signin" onsubmit="return checkForm()">
+          <!-- label標籤的for屬性會和input id屬性一起搭配使用，產生關連性(也可以用class但要確保是整個頁面上唯一的class，避免重複關聯) -->
+          <label for="username">帳號</label>
+          <!-- name屬性，是用來指定送出去的該筆資料是什麼名稱，為的是讓遠端伺服器才能透過定義好的名稱來取出對應的欄位值。有寫name這個屬性的input標籤，所取得的值才會被傳到網頁的後端去 -->
+          <input type="text" id="username" name="username" /><br />
+
+          <label for="password">密碼</label>
+          <!-- type="password" 密碼輸入元素，類似於文字輸入元素，但輸入的內容會被隱藏。-->
+          <input type="password" id="password" name="password" /><br />
+
+          <!-- type="checkbox" 勾選框元素，用於讓使用者選擇是否同意條款。 -->
+          <label for="agreement">同意條款</label>
+          <input type="checkbox" id="agreement" name="agreement" /><br />
+
+          <!-- type="submit" 交按鈕元素，用於提交表單。當使用者點擊此按鈕時，表單將被提交到 action 屬性指定的 URL 處理。 -->
+          <input type="submit" value="登入" />
+        </form>
+
+        <!-- 新增註冊按鈕連結 -->
+        <a href="/register">註冊</a>
+      </div>
+    </div>
+    <div class="calculate">
+      <h2>計算正整數的平方</h2>
+      <p>正整數<input type="text" id="numberInput" /></p>
+
+      <button onclick="calculate()">計算</button>
+    </div>
+
+    <script src="../static/login.js"></script>
+  </body>
+</html>

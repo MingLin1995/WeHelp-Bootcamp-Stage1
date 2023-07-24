@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>註冊頁面</title>
+    <link rel="stylesheet" href="../static/RESET.css" />
+    <link rel="stylesheet" href="../static/frame.css" />
+  </head>
+  <body>
+    <div class="content">
+      <div class="title">
+        <h1>註冊系統</h1>
+      </div>
+      <div class="main">
+        <form method="post">
+          帳號：<input type="text" name="username" /><br />
+          密碼：<input type="password" name="password" /><br />
+          <input type="submit" value="註冊" />
+        </form>
+
+        <!-- 新增超連結回註冊頁面 -->
+        <a href="/">回登入頁面</a>
+        <br />
+
+        <!-- https://medium.com/seaniap/python-web-flask-jinja2%E6%A8%A3%E7%89%88%E5%BC%95%E6%93%8E%E7%9A%84%E4%BD%BF%E7%94%A8-f71305e2da34 -->
+        <!-- 透過app.py 檢查變數 message 是否存在並且不為空，如果 message 存在且不為空，則條件成立，接下來的代碼就會執行，否則忽略。 -->
+        <!-- 註冊成功或是重複，就跳出message資訊 -->
+        {% if message %}
+        <p>{{ message }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
