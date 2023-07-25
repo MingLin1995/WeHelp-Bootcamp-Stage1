@@ -1,9 +1,11 @@
 """ https://ithelp.ithome.com.tw/articles/10258223 關鍵字：網頁模版與資料接口"""
 """ session 參考教學#12"""
+# 建立樣本檔案，放在在專案的templates資料夾底下
 from flask import Flask, render_template, request, redirect, url_for, session
 app = Flask(__name__)
+# 靜態檔案處理 folder指定資料夾名稱 預設為static
 
-""" 載入背後加密機制 """
+""" session載入背後加密機制 """
 app.secret_key = "密鑰可以是任何的字串，但是不要告訴別人"
 
 
@@ -12,7 +14,7 @@ app.secret_key = "密鑰可以是任何的字串，但是不要告訴別人"
 
 @app.route("/", methods=["GET", "POST"])  # methods 預設GET
 def login():
-    return render_template("login.html")
+    return render_template("login.html")  # 將HTML模板給使用者的伺服器
 
 
 """ 用來儲存註冊的帳號、密碼 """
@@ -31,8 +33,7 @@ def register():
         password = request.form["password"]
         if username not in users:
             users[username] = {"username": username, "password": password}
-            # 註冊成功，顯示註冊成功訊息
-            # render_template()第二個參數可以附帶資料內容，HTML透過{{ }}就可以顯示出來
+            # render_template()第二個參數可以附帶資料內容傳送到前端，HTML透過{{ }}就可以顯示出來
             return render_template("register.html", message="恭喜，註冊成功！")
         else:
             message = "抱歉，帳號已經存在，請嘗試其他帳號。"
@@ -103,7 +104,7 @@ def error():
 # 註冊路由除了固定的導向位址，URL 也可以成為函式接收的參數
 def square(number):
     squared_number = number ** 2
-    return render_template("square.html", number=number, squared_number=squared_number)
+    return render_template("square.html", squared_number=squared_number)
 
 
 """ 啟動 """
