@@ -18,7 +18,7 @@ function calculate() {
     alert("請輸入正整數");
   } else {
     /* https://ithelp.ithome.com.tw/articles/10190062 */
-    /* 重定向到Squared Number Page */
+    /* 重定向到square頁面，啟動路由 */
     window.location.href = "/square/" + number;
   }
 }
