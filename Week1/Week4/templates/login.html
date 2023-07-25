@@ -18,7 +18,7 @@
         <h2>登入系統</h2>
         <!-- https://ithelp.ithome.com.tw/m/articles/10262142 -->
         <!-- https://www.ewdna.com/2009/06/formonsubmitsubmit.html -->
-        <!-- onsubmit 提交表單時，要執行的JS -->
+        <!-- onsubmit 提交表單時，先執行的JS判斷使否要提交 -->
         <form method="post" action="/signin" onsubmit="return checkForm()">
           <!-- label標籤的for屬性會和input id屬性一起搭配使用，產生關連性(也可以用class但要確保是整個頁面上唯一的class，避免重複關聯) -->
           <label for="username">帳號</label>
@@ -37,7 +37,7 @@
           <input type="submit" value="登入" />
         </form>
 
-        <!-- 新增註冊按鈕連結 -->
+        <!-- 新增註冊按鈕連結，轉跳註冊頁面 -->
         <a href="/register">註冊</a>
       </div>
     </div>
