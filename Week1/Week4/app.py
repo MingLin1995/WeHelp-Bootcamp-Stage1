@@ -58,8 +58,8 @@ def signin():
 
         # 進行登入驗證
         if username in users and users[username]["password"] == password:
-            # 將 "logged_in" 狀態設置為 True 表示登入成功
-            session["logged_in"] = True
+            # 登入成功後，將用戶名存儲在session中
+            session["username"] = username
             return redirect(url_for("member"))  # 登入成功，轉跳到/member頁面
         else:
             # 登入失敗，轉跳到/error頁面
@@ -71,10 +71,10 @@ def signin():
 
 @app.route("/member")
 def member():
-    # 檢查 "logged_in" 狀態如果為 False，直接轉跳到首頁
-    if not session.get("logged_in", False):
-        return redirect(url_for("login"))
-    return render_template("member.html")
+    # 如果 "username"的鍵存在，就會返回對應的值，否則的話返回None
+    if session.get("username", None):
+        return render_template("member.html")
+    return redirect(url_for("login"))
 
 
 """ 登出 """
@@ -82,8 +82,9 @@ def member():
 
 @app.route("/signout", methods=["GET"])
 def signout():
-    # 將 "logged_in" 狀態設置為 False 表示登出
-    session["logged_in"] = False
+    # https://ithelp.ithome.com.tw/articles/10268922
+    # 清除session中的用戶名(鍵)
+    session.pop("username", None)
     return redirect(url_for("login"))
 
 
