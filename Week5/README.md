@@ -16,6 +16,8 @@ INSERT INTO member (name, username, password,follower_count)
 VALUES 
 ('name4', 'username4', 'password4',400);
 ```
+<img width="538" alt="image" src="https://github.com/MingLin1995/WeHelp-Bootcamp-Stage1/assets/125284928/ac7941e1-0a0c-4aa3-ae85-e3f777f05127">
+
 
 * 使⽤ SELECT 指令取得所有在 member 資料表中的會員資料。
 ```MySQL=
@@ -57,6 +59,8 @@ SELECT * FROM member WHERE username = 'test' AND password = 'test';
 SET SQL_SAFE_UPDATES=0;
 UPDATE member SET name = 'test2' WHERE username = 'test';
 ```
+<img width="291" alt="image" src="https://github.com/MingLin1995/WeHelp-Bootcamp-Stage1/assets/125284928/7a32f4da-30e3-4264-9ac4-a9ca2380068e">
+
 
 ### 任務四
 * 取得 member 資料表中，總共有幾筆資料 ( 幾位會員 )。
@@ -94,6 +98,9 @@ CREATE TABLE message (
   FOREIGN KEY (member_id) REFERENCES member(id)
 );
 ```
+<img width="259" alt="image" src="https://github.com/MingLin1995/WeHelp-Bootcamp-Stage1/assets/125284928/9327762c-db64-47df-ab98-6221ccaa07ff">
+
+
 * 使⽤ SELECT 搭配 JOIN 語法，取得所有留⾔，結果須包含留⾔者的姓名。
 ```MySQL=
 SELECT message.content,member.name
