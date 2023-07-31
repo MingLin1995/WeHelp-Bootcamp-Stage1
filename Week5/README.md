@@ -17,6 +17,7 @@ VALUES
 ('name4', 'username4', 'password4',400);
 ```
 <img width="538" alt="image" src="https://github.com/MingLin1995/WeHelp-Bootcamp-Stage1/assets/125284928/ac7941e1-0a0c-4aa3-ae85-e3f777f05127">
+
 ---
 
 * 使⽤ SELECT 指令取得所有在 member 資料表中的會員資料。
