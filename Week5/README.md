@@ -109,4 +109,5 @@ FROM message
 JOIN member ON member.id = message.member_id
 WHERE member.username = 'test';
 ```
-![](https://hackmd.io/_uploads/B1nXOQSih.png)
+![image](https://github.com/MingLin1995/WeHelp-Bootcamp-Stage1/assets/125284928/662ec3bd-5ff2-48b5-b232-c7cd591bfdc5)
+
