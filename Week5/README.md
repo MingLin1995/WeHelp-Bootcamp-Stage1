@@ -1,5 +1,5 @@
 ### 任務三
-* 使⽤ INSERT 指令新增⼀筆資料到 member 資料表中，這筆資料的 username 和password 欄位必須是 test。接著繼續新增⾄少 4 筆隨意的資料。
+##### 使⽤ INSERT 指令新增⼀筆資料到 member 資料表中，這筆資料的 username 和password 欄位必須是 test。接著繼續新增⾄少 4 筆隨意的資料。
 ```MySQL=
 INSERT INTO member (name, username, password,follower_count)
 VALUES ('test', 'test', 'test',10);
@@ -17,7 +17,7 @@ VALUES
 ('name4', 'username4', 'password4',400);
 ```
 <img width="538" alt="image" src="https://github.com/MingLin1995/WeHelp-Bootcamp-Stage1/assets/125284928/ac7941e1-0a0c-4aa3-ae85-e3f777f05127">
----
+
 * 使⽤ SELECT 指令取得所有在 member 資料表中的會員資料。
 ```MySQL=
 SELECT * FROM member;
