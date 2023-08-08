@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>會員頁面</title>
+    <link rel="stylesheet" href="../static/RESET.css" />
+    <link rel="stylesheet" href="../static/member.css" />
+  </head>
+  <body>
+    <div class="content">
+      <div class="title">
+        <h1>歡迎光臨，這是會員頁</h1>
+      </div>
+
+      <div class="main">
+        <p>{{ member_data[1] }}，歡迎登入系統</p>
+        <a href="/signout">登出系統</a>
+        <br />
+        <a href="/">返回首頁</a>
+      </div>
+
+      <div class="main">
+        <h2>快來留言吧</h2>
+        <form
+          method="post"
+          action="/createMessage"
+          onsubmit="return validateMessage()"
+        >
+          內容 <input type="text" id="content" name="content" /><br />
+          <input type="submit" value="送出" />
+        </form>
+      </div>
+
+      <div class="main">
+        <ul>
+          <!-- 撈出所有留言名稱與內容 -->
+          {% for message in messages %}
+          <li class="message">
+            <span>{{ message.name }} ：</span>{{ message.content }}
+            <!-- 如果留言的帳號與登入會員的帳號一樣，就加入刪除按鈕 -->
+            {% if message.username == member_data[2] %}
+            <button onclick="confirmDelete({{message.id}})">刪除</button>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <script src="../static/member.js"></script>
+  </body>
+</html>
