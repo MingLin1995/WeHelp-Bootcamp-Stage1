@@ -39,6 +39,7 @@ body {
 }
 .main h2 {
   font-weight: bold;
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 .main form input {
@@ -51,4 +52,8 @@ body {
 
 .message {
   margin-bottom: 10px;
+}
+
+.main div {
+  margin-top: 10px;
 }
