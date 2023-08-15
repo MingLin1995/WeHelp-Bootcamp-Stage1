@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>會員頁面</title>
+    <link rel="stylesheet" href="../css/RESET.css" />
+    <link rel="stylesheet" href="../css/member.css" />
+  </head>
+  <body>
+    <div class="content">
+      <div class="title">
+        <h1>歡迎光臨，這是會員頁</h1>
+      </div>
+
+      <div class="main">
+        <p id="welcomeMessage"></p>
+        <a href="#" id="logoutButton">登出系統</a>
+        <br />
+        <a href="login.html">返回首頁</a>
+
+        <!-- 查詢會員資料功能 -->
+        <h2>查詢會員姓名</h2>
+        <label for="queryUsername"></label>
+        <input type="text" id="queryUsername" name="queryUsername" />
+        <button id="queryButton">查詢</button>
+        <div id="queryResult"></div>
+
+        <!-- 修改會員姓名功能 -->
+        <h2>更新我的姓名</h2>
+        <label for="newName"></label>
+        <input
+          type="text"
+          id="newName"
+          name="newName"
+          placeholder="輸入新的姓名"
+        />
+        <button id="updateButton">更新</button>
+        <div id="updateResult"></div>
+      </div>
+
+      <div class="main">
+        <h2>快來留言吧</h2>
+        <form
+          method="post"
+          action="/createMessage"
+          onsubmit="return validateMessage()"
+        >
+          內容 <input type="text" id="content" name="content" /><br />
+          <input type="submit" value="送出" />
+        </form>
+      </div>
+
+      <div class="main">
+        <ul>
+          {% for message in messages %}
+          <li class="message">
+            <span>{{ message.name }} ：</span>{{ message.content }} {% if
+            message.username == member_data[2] %}
+            <button onclick="confirmDelete({{message.id}})">刪除</button>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <script src="../js/member.js"></script>
+  </body>
+</html>
