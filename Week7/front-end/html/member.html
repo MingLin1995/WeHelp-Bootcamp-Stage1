@@ -41,27 +41,14 @@
 
       <div class="main">
         <h2>快來留言吧</h2>
-        <form
-          method="post"
-          action="/createMessage"
-          onsubmit="return validateMessage()"
-        >
+        <form name="createMessage">
           內容 <input type="text" id="content" name="content" /><br />
           <input type="submit" value="送出" />
         </form>
       </div>
 
       <div class="main">
-        <ul>
-          {% for message in messages %}
-          <li class="message">
-            <span>{{ message.name }} ：</span>{{ message.content }} {% if
-            message.username == member_data[2] %}
-            <button onclick="confirmDelete({{message.id}})">刪除</button>
-            {% endif %}
-          </li>
-          {% endfor %}
-        </ul>
+        <div id="messagesContainer"></div>
       </div>
     </div>
     <script src="../js/member.js"></script>

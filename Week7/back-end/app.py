@@ -132,21 +132,20 @@ def get_name():
     data = request.json
     """ 依據帳號，找出會員資訊 """
     username = data["username"]
-    member_neme = user_data(connection_pool, username)
-    """ 取得留言板功能需要的相關資訊 """
-    messages_data = get_messages(connection_pool)
-    return jsonify({"type":"success","message": "登入成功","memberName":member_neme})
+    member_data = user_data(connection_pool, username)
+    member_name=member_data[1]
+    return jsonify({"type":"success","message": "登入成功","memberName":member_name})
 
 
 
 
-""" 依據登入的帳號，找出該會員的姓名 """
+""" 依據登入的帳號，找出該會員的相關資訊 """
 
 
 def user_data(connection_pool, username):
     connection = connection_pool.get_connection()
     cur = connection.cursor()
-    sql = "SELECT name FROM member WHERE username = %s"
+    sql = "SELECT * FROM member WHERE username = %s"
     cur.execute(sql, (username,))
     data = cur.fetchone()
     cur.close()
@@ -156,16 +155,12 @@ def user_data(connection_pool, username):
 """ 留言板 """
 @app.route("/message/get_content", methods=["POST"])
 def get_content():
-    data = request.json
-    """ 依據帳號，找出會員資訊 """
-    username = data["username"]
     """ 取得留言板功能需要的相關資訊 """
     messages_data = get_messages(connection_pool)
-    return jsonify({"type":"success","message": "登入成功","memberName":member_neme})
+    return jsonify({"type":"success","messagesData":messages_data})
 
 """ 找出留言人的姓名以及內容，並且依時間小到大排序 """
 """ 找出帳號以及message.id，連接刪除留言的功能 """
-
 
 def get_messages(connection_pool):
     connection = connection_pool.get_connection()
@@ -181,16 +176,19 @@ def get_messages(connection_pool):
 """ 留言板 """
 
 
-@app.route("/createMessage", methods=["POST"])
+@app.route("/message/create_message", methods=["POST"])
 def create_message():
-    content = request.form["content"]
-    username = session.get("signin_username")
-    """ 依據登入的帳號，找出該會員的相關資訊 """
+    """ 依據登入的帳號，新增留言內容 """
+    data = request.json
+    username = data["username"]
+    content=data["content"]
+    """ 依據登入的帳號，找出該會員的id """
     member_data = user_data(connection_pool, username)
     member_id = member_data[0]
+
     """ 依據member_id，新增留言 """
     save_message(connection_pool, member_id, content)
-    return redirect(url_for("member"))
+    return jsonify ({"type":"success"})
 
 
 """ 新增member_id、留言內容 """
@@ -250,7 +248,6 @@ def error():
 @app.route('/member/get_username')
 def api_get_member():
     username = request.args.get('username')  # 從JS要求的URL的要求字串取得 username
-    print(username)
     member_data = get_member_by_username(connection_pool, username)
     if member_data:
         response = {'data': member_data}
@@ -281,38 +278,12 @@ def get_member_by_username(connection_pool, username):
 
 @app.route('/member/update_name', methods=['PATCH'])
 def api_update_member_name():
-    token = request.headers.get("Authorization")
-    if not token:
-        response = {'error': True, 'message': 'Missing token'}
-    else:
-        decoded_token = verify_token(token.split(" ")[1])
-        
-        if not decoded_token:
-            response = {'error': True, 'message': 'Invalid or expired token'}
-        else:
-            new_name = request.json.get('name')
-            if new_name:
-                update_result = update_member_name(
-                    connection_pool, decoded_token['username'], new_name)
-                if update_result:
-                    response = {'ok': True, "newName": new_name}
-                else:
-                    response = {'error': True}
-            else:
-                response = {'error': True}
-
-    return jsonify(response)
-
-def verify_token(token):
-    try:
-        decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-        return decoded_token
-    except jwt.ExpiredSignatureError:
-        return None  # Token 已過期
-    except jwt.InvalidTokenError:
-        return None  # Token 無效
-
-
+    data = request.json
+    """ 依據帳號，找出會員資訊 """
+    username = data["username"]
+    new_name = data["newName"]
+    update_member_name(connection_pool, username, new_name)
+    return jsonify({"ok": True, "newName": new_name})
 
 def update_member_name(connection_pool, username, new_name):
     connection = connection_pool.get_connection()
