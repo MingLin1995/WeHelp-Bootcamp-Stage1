@@ -93,13 +93,56 @@ const displayMessages = (messagesData) => {
   messagesData.forEach((message) => {
     const messageElement = document.createElement("div");
     messageElement.classList.add("message");
+
+    // 判斷是否顯示刪除按鈕
+    const username = sessionStorage.getItem("username");
+    const showDeleteButton = message.username === username;
+
+    // 顯示留言內容
     messageElement.innerHTML = `
-      <p><strong>${message.name}：${message.content}</strong></p>
+      <p>${message.name}：${message.content} ${
+      showDeleteButton ? '<button class="deleteButton">刪除</button>' : ""
+    }</p>
     `;
+
+    // 添加刪除按鈕的點擊事件處理
+    if (showDeleteButton) {
+      const deleteButton = messageElement.querySelector(".deleteButton");
+      deleteButton.addEventListener("click", () => {
+        deleteMessage(message.id); // 呼叫刪除留言的函式
+      });
+    }
 
     messagesContainer.appendChild(messageElement);
   });
 };
+
+//刪除功能
+async function deleteMessage(messageId) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `http://127.0.0.1:5000/message/delete/${messageId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.json();
+    if (data.type === "success") {
+      // 刪除成功後，更新留言板內容
+      getMessages();
+    } else {
+      console.error("刪除留言失敗:", data.message);
+    }
+  } catch (error) {
+    console.error("連接錯誤:", error);
+  }
+}
+
 // 在頁面載入完成後取得留言板內容
 document.addEventListener("DOMContentLoaded", () => {
   getMessages();
@@ -154,7 +197,7 @@ function confirmDelete(messageId) {
 }
 
 /* 連接後端刪除功能*/
-function deleteMessage(messageId) {
+/* function deleteMessage(messageId) {
   const formData = new FormData();
   formData.append("message_id", messageId);
   fetch("/deleteMessage", {
@@ -163,7 +206,7 @@ function deleteMessage(messageId) {
   }).then(() => {
     location.reload();
   });
-}
+} */
 
 /* ----------------------------------------------------------------- */
 

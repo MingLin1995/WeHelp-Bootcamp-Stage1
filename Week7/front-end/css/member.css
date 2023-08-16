@@ -57,3 +57,7 @@ body {
 .main div {
   margin-top: 10px;
 }
+
+.message {
+  text-align: center;
+}

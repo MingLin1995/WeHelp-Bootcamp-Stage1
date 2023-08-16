@@ -205,13 +205,49 @@ def save_message(connection_pool, member_id, content):
 
 
 """ 刪除留言 """
+@app.route("/message/delete/<int:message_id>", methods=["DELETE"])
+def delete_message(message_id):
+    # 解析 JWT，獲取使用者資訊
+    token = request.headers.get("Authorization")
+    if not token:
+        return jsonify({"message": "Missing token"}), 401
 
+    try:
+        decoded_token = jwt.decode(token.split(" ")[1], app.config['SECRET_KEY'], algorithms=["HS256"])
+        username = decoded_token.get("username")
+    except jwt.ExpiredSignatureError:
+        return jsonify({"message": "Token has expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"message": "Invalid token"}), 401
 
-@app.route("/deleteMessage", methods=["POST"])
-def delete_message():
-    """ 回傳點擊的留言id(index) """
-    message_id = request.form["message_id"]  # 這個可能是不可信的，但資料庫的index、session是可信的
-    """ 刪除特定留言 """
+    # 比較留言的擁有者與目前登入的使用者名稱
+    if is_message_owner(connection_pool, message_id, username):
+        # 執行刪除留言的動作，這裡假設你有一個名為 delete_message_by_id 的函式
+        success = delete_message_by_id(connection_pool, message_id)
+        print(success)
+
+        if success:
+            return jsonify({"type": "success", "message": "留言刪除成功"})
+        else:
+            return jsonify({"type": "error", "message": "無法刪除留言"})
+    else:
+        return jsonify({"type": "error", "message": "無權限刪除該留言"})
+
+def is_message_owner(connection_pool, message_id, username):
+    connection = connection_pool.get_connection()
+    cur = connection.cursor()
+    sql = "SELECT member.username FROM message INNER JOIN member ON message.member_id = member.id WHERE message.id = %s"
+    cur.execute(sql, (message_id,))
+    result = cur.fetchone()
+    cur.close()
+    connection.close()
+
+    if result and result[0] == username:
+        return True
+    else:
+        return False
+
+def delete_message_by_id(connection_pool, message_id):
     connection = connection_pool.get_connection()
     cur = connection.cursor()
     sql = "DELETE FROM message WHERE id = %s"
@@ -219,7 +255,8 @@ def delete_message():
     connection.commit()
     cur.close()
     connection.close()
-    return redirect(url_for("member"))
+    return "ok"
+
 
 
 """ 登出 """
