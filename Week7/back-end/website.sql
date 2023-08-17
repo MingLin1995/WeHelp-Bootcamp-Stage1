@@ -31,5 +31,3 @@ SELECT * FROM message;
 
 
 
-
-

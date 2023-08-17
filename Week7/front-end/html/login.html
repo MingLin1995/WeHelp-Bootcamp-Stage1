@@ -15,7 +15,8 @@
 
       <div class="register">
         <h2>註冊帳號</h2>
-        <form name="registerForm">
+        <!-- 先停止表單的提交（因為後續要到JS處理） -->
+        <form name="registerForm" onsubmit="return false">
           姓名<input type="text" id="registerName" name="name" /><br />
           帳號<input type="text" id="registerUsername" name="username" /><br />
           密碼<input
@@ -23,16 +24,17 @@
             id="registerPassword"
             name="password"
           /><br />
-          <input type="submit" value="註冊" />
+          <!-- 點擊時的事件處理 -->
+          <input type="submit" value="註冊" onclick="submitRegisterForm()" />
         </form>
       </div>
 
       <div class="login">
         <h2>登入系統</h2>
-        <form name="loginForm">
+        <form name="loginForm" onsubmit="return false">
           帳號<input type="text" id="loginUsername" name="username" /><br />
           密碼<input type="password" id="loginPassword" name="password" /><br />
-          <input type="submit" value="登入" />
+          <input type="submit" value="登入" onclick="submitLogin()" />
         </form>
       </div>
     </div>

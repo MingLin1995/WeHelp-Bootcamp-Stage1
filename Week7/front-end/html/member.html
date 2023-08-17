@@ -23,7 +23,7 @@
         <h2>查詢會員姓名</h2>
         <label for="queryUsername"></label>
         <input type="text" id="queryUsername" name="queryUsername" />
-        <button id="queryButton">查詢</button>
+        <button id="queryButton" onclick="submitQuery()">查詢</button>
         <div id="queryResult"></div>
 
         <!-- 修改會員姓名功能 -->
@@ -35,18 +35,17 @@
           name="newName"
           placeholder="輸入新的姓名"
         />
-        <button id="updateButton">更新</button>
+        <button id="updateButton" onclick="submitUpdate()">更新</button>
         <div id="updateResult"></div>
       </div>
 
       <div class="main">
         <h2>快來留言吧</h2>
-        <form name="createMessage">
+        <form name="createMessage" onsubmit="return false">
           內容 <input type="text" id="content" name="content" /><br />
-          <input type="submit" value="送出" />
+          <input type="submit" value="送出" onclick="submitMessage()" />
         </form>
       </div>
-
       <div id="messagesContainer"></div>
     </div>
     <script src="../js/member.js"></script>

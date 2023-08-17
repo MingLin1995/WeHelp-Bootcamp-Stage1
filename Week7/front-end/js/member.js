@@ -1,9 +1,20 @@
-// 在 member.html 頁面載入時，檢查 JWT token 是否有效
-document.addEventListener("DOMContentLoaded", async () => {
+/* ---------------------------Token檢查--------------------------- */
+//載入member頁面檢查Token
+window.onload = function () {
+  checkToken();
+  getName();
+  getMessages();
+};
+
+// 檢查 JWT token 是否有效
+async function checkToken() {
+  // 讀取登入的帳號
+  const username = sessionStorage.getItem("username");
+  //取得後端傳過來的token
   const token = localStorage.getItem("token");
 
+  // 如果token為空值或是不存在，轉跳到登入頁面
   if (!token) {
-    // 如果沒有 token，轉跳到登入頁面
     window.location.href = "login.html";
     return;
   }
@@ -13,13 +24,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
+        username: username,
       },
     });
 
-    if (response.status === 200) {
-      // token 有效，繼續顯示會員頁面內容
-      const memberData = await response.json();
-      // 顯示歡迎訊息或其他相關內容
+    const data = await response.json();
+    if (data["type"] == "success") {
     } else {
       // token 無效，轉跳到登入頁面
       window.location.href = "login.html";
@@ -27,29 +37,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     console.error("連接錯誤:", error);
   }
-});
-
-// 登出
-document.getElementById("logoutButton").addEventListener("click", () => {
-  // 清除 Local Storage 中的 token
-  localStorage.removeItem("token");
-  console.log("Logged out");
-  // 重新導向到登入頁面
-  window.location.href = "login.html";
-});
+}
 
 //會員頁面，顯示會員姓名
-document.addEventListener("DOMContentLoaded", async () => {
-  // 讀取登入的帳號
+async function getName() {
   const username = sessionStorage.getItem("username");
   try {
-    const response = await fetch("http://127.0.0.1:5000/member/get_name", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: username }),
-    });
+    const response = await fetch(
+      `http://127.0.0.1:5000/member/get_name?username=${username}`,
+      {
+        method: "GET",
+      }
+    );
 
     const data = await response.json();
     if (data.type === "success") {
@@ -62,10 +61,81 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     console.error("連接錯誤:", error);
   }
+}
+
+// 登出
+document.getElementById("logoutButton").addEventListener("click", () => {
+  // 清除 Local Storage 中的 token
+  localStorage.removeItem("token");
+  // 重新導向到登入頁面
+  window.location.href = "login.html";
 });
 
+/* ------------------查詢帳號、更新姓名功能------------------- */
+/* 查詢會員帳號功能 */
+// https://xhkpandaman.medium.com/%E9%9B%B6%E5%9F%BA%E7%A4%8E-%E7%B0%A1%E6%98%93javascript-8-api-%E5%AD%96%E5%AF%B6-fetch%E5%8F%8Aasync-await-574de2f16dd9
+async function submitQuery() {
+  const queryResult = document.getElementById("queryResult");
+  const queryUsername = document.getElementById("queryUsername").value;
+  //如果有輸入帳號
+  if (queryUsername) {
+    //傳送到後端查詢
+    const response = await fetch(
+      `http://127.0.0.1:5000/member/get_username?username=${queryUsername}`,
+      {
+        mothod: "GET",
+      }
+    );
+
+    //後端回傳回來
+    const data = await response.json();
+    console.log(data);
+    if (data["type"] == "success") {
+      queryResult.innerHTML = `${data["message"]["name"]}（${data["message"]["username"]}）`;
+    } else {
+      queryResult.innerHTML = "查無此會員或帳號輸入錯誤";
+    }
+    //如果沒輸入帳號
+  } else {
+    queryResult.innerHTML = "請輸入要查詢的會員帳號";
+  }
+}
+
+/* 更新會員姓名功能 */
+async function submitUpdate() {
+  const updateResult = document.getElementById("updateResult");
+  const username = sessionStorage.getItem("username");
+  const newName = document.getElementById("newName").value;
+  if (newName) {
+    const response = await fetch("http://127.0.0.1:5000/member/update_name", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: username, newName: newName }),
+    });
+
+    const data = await response.json();
+    //data.ok會對應後端回傳的true
+    if (data["type"] == "success") {
+      updateResult.innerHTML = "更新成功";
+
+      /* 同步更新頁面資訊 */
+      getName();
+
+      /* 同步更新留言板 */
+      getMessages();
+    } else {
+      updateResult.innerHTML = "更新失敗";
+    }
+  } else {
+    updateResult.innerHTML = "請輸入新的會員姓名";
+  }
+}
+
+/* ---------------------------留言板功能--------------------------- */
 // 取得留言板內容
-const getMessages = async () => {
+async function getMessages() {
   try {
     const response = await fetch("http://127.0.0.1:5000/message/get_content", {
       method: "POST",
@@ -73,18 +143,17 @@ const getMessages = async () => {
         "Content-Type": "application/json",
       },
     });
-
     const data = await response.json();
-    if (data.type === "success") {
-      const messagesData = data.messagesData;
+    if (data["type"] == "success") {
+      const messagesData = data["messagesData"];
+      //顯示留言板內容
       displayMessages(messagesData);
-    } else {
-      console.error("無法獲取留言板內容:", data.message);
     }
   } catch (error) {
     console.error("連接錯誤:", error);
   }
-};
+}
+
 // 顯示留言板內容
 const displayMessages = (messagesData) => {
   const messagesContainer = document.getElementById("messagesContainer");
@@ -96,28 +165,66 @@ const displayMessages = (messagesData) => {
 
     // 判斷是否顯示刪除按鈕
     const username = sessionStorage.getItem("username");
-    const showDeleteButton = message.username === username;
+    const showDeleteButton = message["username"] == username;
 
     // 顯示留言內容
+    /*
+    showDeleteButton 為布林值，判斷是否登入者的留言
+    ? 代表分隔符號 
+    若為T 執行　：　左邊的程式碼(建立按鈕)
+    若為F 執行　：　右邊的程式碼
+    */
     messageElement.innerHTML = `
-      <p>${message.name}：${message.content} ${
-      showDeleteButton ? '<button class="deleteButton">刪除</button>' : ""
+  <p>${message["name"]}：${message["content"]} ${
+      showDeleteButton
+        ? '<button class="deleteButton" onclick="deleteMessage(' +
+          message["id"] +
+          ')">刪除</button>'
+        : ""
     }</p>
-    `;
-
-    // 添加刪除按鈕的點擊事件處理
-    if (showDeleteButton) {
-      const deleteButton = messageElement.querySelector(".deleteButton");
-      deleteButton.addEventListener("click", () => {
-        deleteMessage(message.id); // 呼叫刪除留言的函式
-      });
-    }
+`;
 
     messagesContainer.appendChild(messageElement);
   });
 };
 
-//刪除功能
+// 留言功能
+async function submitMessage() {
+  const content = document.getElementById("content").value;
+  if (content == "") {
+    alert("留言內容不能為空白");
+    return;
+  }
+
+  const username = sessionStorage.getItem("username");
+
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:5000/message/create_message",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: username, content: content }),
+      }
+    );
+
+    const data = await response.json();
+    if (data["type"] == "success") {
+      // 清空輸入框
+      document.getElementById("content").value = "";
+      // 更新留言板
+      getMessages();
+    } else {
+      alert("留言發送失敗");
+    }
+  } catch (error) {
+    console.error("連接錯誤:", error);
+  }
+}
+
+// 刪除留言功能
 async function deleteMessage(messageId) {
   try {
     const token = localStorage.getItem("token");
@@ -132,148 +239,13 @@ async function deleteMessage(messageId) {
       }
     );
     const data = await response.json();
-    if (data.type === "success") {
+    if (data["type"] == "success") {
       // 刪除成功後，更新留言板內容
       getMessages();
     } else {
-      console.error("刪除留言失敗:", data.message);
+      console.error(data["message"]);
     }
   } catch (error) {
     console.error("連接錯誤:", error);
   }
 }
-
-// 在頁面載入完成後取得留言板內容
-document.addEventListener("DOMContentLoaded", () => {
-  getMessages();
-});
-
-// 留言功能
-const createMessage = document.querySelector("form[name='createMessage']");
-createMessage.addEventListener("submit", async (event) => {
-  // 停止表單提交
-  event.preventDefault();
-
-  var content = document.getElementById("content").value;
-  if (content == "") {
-    alert("留言內容不能為空白");
-    return; //若空白就跳出
-  }
-
-  const username = sessionStorage.getItem("username");
-  try {
-    const response = await fetch(
-      "http://127.0.0.1:5000/message/create_message",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: username, content: content }),
-      }
-    );
-
-    const data = await response.json();
-    if (data.type === "success") {
-      // 清空輸入框
-      document.getElementById("content").value = "";
-      // 更新留言板，這裡假設有一個函式 updateMessageBoard 用來更新留言板
-      getMessages();
-    } else {
-      alert("留言發送失敗");
-    }
-  } catch (error) {
-    console.error("連接錯誤:", error);
-  }
-});
-
-/* ---------------------------------------------------------------- */
-
-/* 刪除確認，回傳該筆留言的index */
-function confirmDelete(messageId) {
-  if (confirm("確定要刪除這則留言嗎？")) {
-    deleteMessage(messageId);
-  }
-}
-
-/* 連接後端刪除功能*/
-/* function deleteMessage(messageId) {
-  const formData = new FormData();
-  formData.append("message_id", messageId);
-  fetch("/deleteMessage", {
-    method: "POST",
-    body: formData,
-  }).then(() => {
-    location.reload();
-  });
-} */
-
-/* ----------------------------------------------------------------- */
-
-/* 查詢會員帳號功能 */
-// https://xhkpandaman.medium.com/%E9%9B%B6%E5%9F%BA%E7%A4%8E-%E7%B0%A1%E6%98%93javascript-8-api-%E5%AD%96%E5%AF%B6-fetch%E5%8F%8Aasync-await-574de2f16dd9
-const queryButton = document.getElementById("queryButton");
-const queryResult = document.getElementById("queryResult");
-
-queryButton.addEventListener("click", async () => {
-  const queryUsername = document.getElementById("queryUsername").value;
-  //如果有輸入帳號
-  if (queryUsername) {
-    //傳送到後端查詢
-    const response = await fetch(
-      `http://127.0.0.1:5000/member/get_username?username=${queryUsername}`,
-      {
-        mothod: "GET",
-      }
-    );
-
-    //後端回傳回來
-    const data = await response.json();
-    if (data.data) {
-      queryResult.innerHTML = `${data["data"]["name"]}（${data["data"]["username"]}）`;
-    } else {
-      queryResult.innerHTML = "查無此會員或帳號輸入錯誤";
-    }
-    //如果沒輸入帳號
-  } else {
-    queryResult.innerHTML = "請輸入要查詢的會員帳號";
-  }
-});
-
-/* 更新會員姓名功能 */
-const updateButton = document.getElementById("updateButton");
-const updateResult = document.getElementById("updateResult");
-
-updateButton.addEventListener("click", async () => {
-  const username = sessionStorage.getItem("username");
-  const newName = document.getElementById("newName").value;
-  if (newName) {
-    const response = await fetch("http://127.0.0.1:5000/member/update_name", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        // 在這裡加入 Token 到 headers
-        //Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      //將JS物件轉換回JSON格式
-      body: JSON.stringify({ username: username, newName: newName }),
-    });
-
-    const data = await response.json();
-    //data.ok會對應後端回傳的true
-    if (data.ok) {
-      updateResult.innerHTML = "更新成功";
-
-      /* 同步更新頁面資訊 */
-      const welcomeMessageElement = document.getElementById("welcomeMessage");
-      welcomeMessageElement.textContent = `${data["newName"]}，歡迎登入系統`;
-
-      /* 同步更新留言板 */
-      getMessages();
-    } else {
-      updateResult.innerHTML = "更新失敗";
-    }
-  } else {
-    updateResult.innerHTML = "請輸入新的會員姓名";
-  }
-});

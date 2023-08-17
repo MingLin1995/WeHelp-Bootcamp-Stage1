@@ -61,3 +61,8 @@ body {
 .message {
   text-align: center;
 }
+
+#messagesContainer {
+  border-top: 1px solid rgb(169, 167, 167);
+  padding-top: 20px;
+}
