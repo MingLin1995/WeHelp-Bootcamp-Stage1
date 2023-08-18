@@ -22,8 +22,21 @@ CREATE TABLE message (
   time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (member_id) REFERENCES member(id)
 );
-
 SELECT * FROM message;
+
+CREATE TABLE token (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    member_id BIGINT NOT NULL,
+    token VARCHAR(500) NOT NULL,
+    FOREIGN KEY (member_id) REFERENCES member(id)
+);
+
+SELECT * FROM token;
+
+
+
+
+
 
 
 

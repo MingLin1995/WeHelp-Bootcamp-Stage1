@@ -92,7 +92,8 @@ def signin():
                    'exp': time.time() + 60*60}
         token = jwt.encode(
             payload, app.config['SECRET_KEY'], algorithm="S256", headers=header)
-
+        # 將新建立的token存入資料庫
+        save_token(connection_pool, username, token)
         return jsonify({"type": "success", "message": "登入成功", "username": username, "token": token})
 
 
@@ -110,6 +111,36 @@ def signin_check(connection_pool, username, password):
     return data
 
 
+""" 將token存入資料庫 """
+
+
+def save_token(connection_pool, username, token):
+    connection = connection_pool.get_connection()
+    cur = connection.cursor()
+
+    # 找到對應的 member_id
+    find_member_id_sql = "SELECT id FROM member WHERE username = %s"
+    cur.execute(find_member_id_sql, (username,))
+    member_id = cur.fetchone()
+
+    # 檢查是否已存在該 member_id 的 token 記錄
+    find_token_sql = "SELECT member_id FROM token WHERE member_id = %s"
+    cur.execute(find_token_sql, (member_id[0],))
+    old_token_id = cur.fetchone()
+
+    # 如果有 token 刪除舊的 token 記錄
+    if old_token_id:
+        delete_token_sql = "DELETE FROM token WHERE id = %s"
+        cur.execute(delete_token_sql, (old_token_id[0],))
+
+    # 新增 token
+    insert_token_sql = "INSERT INTO token (member_id, token) VALUES (%s, %s)"
+    cur.execute(insert_token_sql, (member_id[0], token))
+    connection.commit()
+    cur.close()
+    connection.close()
+
+
 """ ---------------------------Token檢查--------------------------- """
 """ 驗證token """
 
@@ -124,19 +155,32 @@ def verify_token():
     # 如果為空值
     if not token:
         return jsonify({"type": "fail", "message": "沒有Token"})
+
     try:
-        # 解碼token
         decoded_token = jwt.decode(
             token, app.config['SECRET_KEY'], algorithms=["HS256"])
         # 驗證帳號是否一致
         if decoded_token.get("username") == username:
-            # 回傳使用者帳號
-            return jsonify({"type": "success", "message": "核對成功", "username": decoded_token.get("username")})
+            # 驗證token是否跟資料庫的一樣
+            check_token(connection_pool, token)
+            return jsonify({"type": "success", "message": "核對成功"})
         else:
             return jsonify({"type": "fail", "message": "核對失敗"})
-    # 如果過期
     except jwt.ExpiredSignatureError:
         return jsonify({"type": "fail", "message": "Token過期"})
+    except jwt.DecodeError:
+        return jsonify({"type": "fail", "message": "Token解碼失敗"})
+
+
+def check_token(connection_pool, token):
+    connection = connection_pool.get_connection()
+    cur = connection.cursor()
+    sql = "SELECT * FROM token WHERE token = %s"
+    cur.execute(sql, (token,))
+    data = cur.fetchone()
+    cur.close()
+    connection.close()
+    return data
 
 
 """ 會員頁面 """
