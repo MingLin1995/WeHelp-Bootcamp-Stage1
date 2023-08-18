@@ -30,6 +30,9 @@ async function checkToken() {
 
     const data = await response.json();
     if (data["type"] == "success") {
+      // 驗證成功，執行相應操作
+      console.log(data["message"]);
+      // 更新用戶介面、執行其他處理等等
     } else {
       // token 無效，轉跳到登入頁面
       window.location.href = "login.html";
@@ -41,6 +44,7 @@ async function checkToken() {
 
 //會員頁面，顯示會員姓名
 async function getName() {
+  await checkToken(); // 等待驗證 token 完成
   const username = sessionStorage.getItem("username");
   try {
     const response = await fetch(
@@ -75,6 +79,7 @@ document.getElementById("logoutButton").addEventListener("click", () => {
 /* 查詢會員帳號功能 */
 // https://xhkpandaman.medium.com/%E9%9B%B6%E5%9F%BA%E7%A4%8E-%E7%B0%A1%E6%98%93javascript-8-api-%E5%AD%96%E5%AF%B6-fetch%E5%8F%8Aasync-await-574de2f16dd9
 async function submitQuery() {
+  await checkToken();
   const queryResult = document.getElementById("queryResult");
   const queryUsername = document.getElementById("queryUsername").value;
   //如果有輸入帳號
@@ -103,6 +108,7 @@ async function submitQuery() {
 
 /* 更新會員姓名功能 */
 async function submitUpdate() {
+  await checkToken();
   const updateResult = document.getElementById("updateResult");
   const username = sessionStorage.getItem("username");
   const newName = document.getElementById("newName").value;
@@ -190,6 +196,7 @@ const displayMessages = (messagesData) => {
 
 // 留言功能
 async function submitMessage() {
+  await checkToken();
   const content = document.getElementById("content").value;
   if (content == "") {
     alert("留言內容不能為空白");
@@ -226,6 +233,7 @@ async function submitMessage() {
 
 // 刪除留言功能
 async function deleteMessage(messageId) {
+  await checkToken();
   try {
     const token = localStorage.getItem("token");
     const response = await fetch(
