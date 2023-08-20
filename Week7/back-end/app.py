@@ -51,27 +51,17 @@ def signup():
 
 
 def signup_check(connection_pool, username):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor()
     sql = "SELECT * FROM member WHERE username = %s"
-    cur.execute(sql, (username,))
-    data = cur.fetchone()
-    cur.close()
-    connection.close()
-    return data
+    return execute_query(connection_pool, sql, (username,), fetch_one=True)
 
 
 """ 新註冊姓名、帳號、密碼 """
 
 
 def signup_new_user(connection_pool, name, username, password):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor()
     sql = "INSERT INTO member (name, username, password) VALUES (%s, %s, %s)"
-    cur.execute(sql, (name, username, password))
-    connection.commit()
-    cur.close()
-    connection.close()
+    execute_query(connection_pool, sql,
+                  (name, username, password), commit=True)
 
 
 """ 登入 """
@@ -101,14 +91,8 @@ def signin():
 
 
 def signin_check(connection_pool, username, password):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor()
     sql = "SELECT * FROM member WHERE username = %s AND password = %s"
-    cur.execute(sql, (username, password))
-    data = cur.fetchone()
-    cur.close()
-    connection.close()
-    return data
+    return execute_query(connection_pool, sql, (username, password), fetch_one=True)
 
 
 """ 將token存入資料庫 """
@@ -130,13 +114,14 @@ def save_token(connection_pool, username, token):
 
     # 如果有 token 刪除舊的 token 記錄
     if old_token_id:
-        delete_token_sql = "DELETE FROM token WHERE id = %s"
+        delete_token_sql = "DELETE FROM token WHERE member_id = %s"
         cur.execute(delete_token_sql, (old_token_id[0],))
 
-    # 新增 token
+    # 如果沒有 token ，則新增 token到資料庫
     insert_token_sql = "INSERT INTO token (member_id, token) VALUES (%s, %s)"
     cur.execute(insert_token_sql, (member_id[0], token))
     connection.commit()
+
     cur.close()
     connection.close()
 
@@ -161,9 +146,11 @@ def verify_token():
             token, app.config['SECRET_KEY'], algorithms=["HS256"])
         # 驗證帳號是否一致
         if decoded_token.get("username") == username:
-            # 驗證token是否跟資料庫的一樣
-            check_token(connection_pool, token)
-            return jsonify({"type": "success", "message": "核對成功"})
+            # 驗證 token 是否與資料庫中的一致
+            if check_token(connection_pool, token):
+                return jsonify({"type": "success", "message": "核對成功"})
+            else:
+                return jsonify({"type": "fail", "message": "核對失敗"})
         else:
             return jsonify({"type": "fail", "message": "核對失敗"})
     except jwt.ExpiredSignatureError:
@@ -173,14 +160,41 @@ def verify_token():
 
 
 def check_token(connection_pool, token):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor()
     sql = "SELECT * FROM token WHERE token = %s"
-    cur.execute(sql, (token,))
-    data = cur.fetchone()
-    cur.close()
-    connection.close()
-    return data
+    return execute_query(connection_pool, sql, (token,), fetch_one=True)
+
+
+""" 登出 """
+
+
+@app.route("/member/logout", methods=["DELETE"])
+def logout():
+    token = request.headers.get("Authorization")
+    token = token.replace("Bearer ", "")
+    if delete_token(connection_pool, token):
+        return jsonify({"type": "success", "message": "登出成功"})
+    else:
+        return jsonify({"type": "error", "message": "登出失敗"})
+
+
+def delete_token(connection_pool, token):
+    try:
+        # 先解除刪除的安全機制
+        sql_1 = "set sql_safe_updates=0"
+        execute_query(connection_pool, sql_1, commit=True)
+
+        # 執行刪除
+        sql_2 = "DELETE FROM token WHERE token = %s"
+        execute_query(connection_pool, sql_2, (token,), commit=True)
+
+        # 恢復安全機制
+        sql_3 = "set sql_safe_updates=1"
+        execute_query(connection_pool, sql_3, commit=True)
+
+        return True
+    except Exception as e:
+        print("刪除 token 時發生錯誤:", str(e))
+        return False
 
 
 """ 會員頁面 """
@@ -199,14 +213,8 @@ def get_name():
 
 
 def user_data(connection_pool, username):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor()
     sql = "SELECT * FROM member WHERE username = %s"
-    cur.execute(sql, (username,))
-    data = cur.fetchone()
-    cur.close()
-    connection.close()
-    return data
+    return execute_query(connection_pool, sql, (username,), fetch_one=True)
 
 
 """ ------------------查詢帳號、更新姓名功能------------------- """
@@ -228,14 +236,8 @@ def api_get_member():
 
 
 def get_member_by_username(connection_pool, username):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor(dictionary=True)
     sql = "SELECT id, name, username FROM member WHERE username = %s"
-    cur.execute(sql, (username,))
-    data = cur.fetchone()
-    cur.close()
-    connection.close()
-    return data
+    return execute_query(connection_pool, sql, (username,), fetch_one=True)
 
 # http://127.0.0.1:3000/api/member?username=111 測試成功
 
@@ -254,13 +256,8 @@ def api_update_member_name():
 
 
 def update_member_name(connection_pool, username, new_name):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor()
     sql = "UPDATE member SET name = %s WHERE username = %s"
-    cur.execute(sql, (new_name, username))
-    connection.commit()
-    cur.close()
-    connection.close()
+    execute_query(connection_pool, sql, (new_name, username), commit=True)
     return "ok"
 
 
@@ -280,14 +277,8 @@ def get_content():
 
 
 def get_messages(connection_pool):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor(dictionary=True)
-    sql = "SELECT member.username,member.name, message.id,message.content FROM message INNER JOIN member ON message.member_id = member.id ORDER BY message.time DESC"
-    cur.execute(sql)
-    messages = cur.fetchall()
-    cur.close()
-    connection.close()
-    return messages
+    sql = "SELECT member.username, member.name, message.id, message.content FROM message INNER JOIN member ON message.member_id = member.id ORDER BY message.time DESC"
+    return execute_query(connection_pool, sql, fetch_one=False)
 
 
 """ 留言功能 """
@@ -312,13 +303,8 @@ def create_message():
 
 
 def save_message(connection_pool, member_id, content):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor()
     sql = "INSERT INTO message (member_id, content) VALUES (%s, %s)"
-    cur.execute(sql, (member_id, content))
-    connection.commit()
-    cur.close()
-    connection.close()
+    execute_query(connection_pool, sql, (member_id, content), commit=True)
 
 
 """ 刪除留言 """
@@ -352,25 +338,36 @@ def delete_message(message_id):
 
 
 def is_message_owner(connection_pool, message_id):
-    connection = connection_pool.get_connection()
-    cur = connection.cursor()
     sql = "SELECT member.username FROM message JOIN member ON message.member_id = member.id WHERE message.id = %s"
-    cur.execute(sql, (message_id,))
-    result = cur.fetchone()
-    cur.close()
-    connection.close()
-    return result
+    return execute_query(connection_pool, sql, (message_id,), fetch_one=True)
 
 
 def delete_message_by_id(connection_pool, message_id):
+    sql = "DELETE FROM message WHERE id = %s"
+    execute_query(connection_pool, sql, (message_id,), commit=True)
+    return "ok"
+
+
+""" ---------------------簡化資料庫溝通流程------------------------ """
+
+
+def execute_query(connection_pool, sql, params=None, fetch_one=False, commit=False):
     connection = connection_pool.get_connection()
     cur = connection.cursor()
-    sql = "DELETE FROM message WHERE id = %s"
-    cur.execute(sql, (message_id,))
-    connection.commit()
+    cur.execute(sql, params)
+
+    if fetch_one:
+        data = cur.fetchone()
+    else:
+        data = cur.fetchall()
+
+    if commit:
+        connection.commit()
+
     cur.close()
     connection.close()
-    return "ok"
+
+    return data
 
 
 """ 啟動 """
