@@ -68,12 +68,29 @@ async function getName() {
 }
 
 // 登出
-document.getElementById("logoutButton").addEventListener("click", () => {
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  const token = localStorage.getItem("token");
+  const response = await fetch("http://127.0.0.1:5000/member/logout", {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+  if (data.type === "success") {
+    // 清除 Local Storage 中的 token
+    localStorage.removeItem("token");
+    // 重新導向到登入頁面
+    window.location.href = "login.html";
+  }
+});
+
+/* document.getElementById("logoutButton").addEventListener("click", () => {
   // 清除 Local Storage 中的 token
   localStorage.removeItem("token");
   // 重新導向到登入頁面
   window.location.href = "login.html";
-});
+}); */
 
 /* ------------------查詢帳號、更新姓名功能------------------- */
 /* 查詢會員帳號功能 */
@@ -88,15 +105,17 @@ async function submitQuery() {
     const response = await fetch(
       `http://127.0.0.1:5000/member/get_username?username=${queryUsername}`,
       {
-        mothod: "GET",
+        method: "GET",
       }
     );
 
     //後端回傳回來
     const data = await response.json();
-    console.log(data);
+    console.log(data["message"][0]);
     if (data["type"] == "success") {
-      queryResult.innerHTML = `${data["message"]["name"]}（${data["message"]["username"]}）`;
+      const name = data["message"][1];
+      const username = data["message"][2];
+      queryResult.innerHTML = `${name}（${username}）`;
     } else {
       queryResult.innerHTML = "查無此會員或帳號輸入錯誤";
     }
@@ -161,17 +180,22 @@ async function getMessages() {
 }
 
 // 顯示留言板內容
-const displayMessages = (messagesData) => {
+const displayMessages = (messagesDataArray) => {
   const messagesContainer = document.getElementById("messagesContainer");
   messagesContainer.innerHTML = ""; // 清空容器
 
-  messagesData.forEach((message) => {
+  messagesDataArray.forEach((messageData) => {
     const messageElement = document.createElement("div");
     messageElement.classList.add("message");
 
+    const username = messageData[0];
+    const name = messageData[1];
+    const id = messageData[2];
+    const content = messageData[3];
+
     // 判斷是否顯示刪除按鈕
-    const username = sessionStorage.getItem("username");
-    const showDeleteButton = message["username"] == username;
+    const signin_username = sessionStorage.getItem("username");
+    const showDeleteButton = username == signin_username;
 
     // 顯示留言內容
     /*
@@ -181,14 +205,13 @@ const displayMessages = (messagesData) => {
     若為F 執行　：　右邊的程式碼
     */
     messageElement.innerHTML = `
-  <p>${message["name"]}：${message["content"]} ${
+      <p>${name}：${content} ${
       showDeleteButton
         ? '<button class="deleteButton" onclick="deleteMessage(' +
-          message["id"] +
+          id +
           ')">刪除</button>'
         : ""
-    }</p>
-`;
+    }</p>`;
 
     messagesContainer.appendChild(messageElement);
   });
