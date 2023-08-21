@@ -40,8 +40,8 @@ def signup():
     name = data["name"]
     username = data["username"]
     password = data["password"]
-    if signup_check(connection_pool, username) is None:
-        signup_new_user(connection_pool, name, username, password)
+    if signup_check(username) is None:
+        signup_new_user(name, username, password)
         return jsonify({"type": "success", "message": "註冊成功"})
     else:
         return jsonify({"type": "fail", "message": "帳號已經被註冊"})
@@ -50,7 +50,7 @@ def signup():
 """ 檢查帳號是否註冊過 """
 
 
-def signup_check(connection_pool, username):
+def signup_check(username):
     sql = "SELECT * FROM member WHERE username = %s"
     return execute_query(connection_pool, sql, (username,), fetch_one=True)
 
@@ -58,7 +58,7 @@ def signup_check(connection_pool, username):
 """ 新註冊姓名、帳號、密碼 """
 
 
-def signup_new_user(connection_pool, name, username, password):
+def signup_new_user(name, username, password):
     sql = "INSERT INTO member (name, username, password) VALUES (%s, %s, %s)"
     execute_query(connection_pool, sql,
                   (name, username, password), commit=True)
@@ -72,10 +72,10 @@ def signin():
     data = request.json
     username = data["username"]
     password = data["password"]
-    if signin_check(connection_pool, username, password) is None:
+    if signin_check(username, password) is None:
         return jsonify({"type": "fail", "message": "帳號或密碼輸入錯誤"})
     else:
-        signin_check(connection_pool, username, password)
+        signin_check(username, password)
 
         # 建立token
         payload = {'username': username,
@@ -83,14 +83,14 @@ def signin():
         token = jwt.encode(
             payload, app.config['SECRET_KEY'], algorithm="S256", headers=header)
         # 將新建立的token存入資料庫
-        save_token(connection_pool, username, token)
+        save_token(username, token)
         return jsonify({"type": "success", "message": "登入成功", "username": username, "token": token})
 
 
 """ 檢查帳號密碼是否正確 """
 
 
-def signin_check(connection_pool, username, password):
+def signin_check(username, password):
     sql = "SELECT * FROM member WHERE username = %s AND password = %s"
     return execute_query(connection_pool, sql, (username, password), fetch_one=True)
 
@@ -98,7 +98,7 @@ def signin_check(connection_pool, username, password):
 """ 將token存入資料庫 """
 
 
-def save_token(connection_pool, username, token):
+def save_token(username, token):
     connection = connection_pool.get_connection()
     cur = connection.cursor()
 
@@ -147,7 +147,7 @@ def verify_token():
         # 驗證帳號是否一致
         if decoded_token.get("username") == username:
             # 驗證 token 是否與資料庫中的一致
-            if check_token(connection_pool, token):
+            if check_token(token):
                 return jsonify({"type": "success", "message": "核對成功"})
             else:
                 return jsonify({"type": "fail", "message": "核對失敗"})
@@ -159,7 +159,7 @@ def verify_token():
         return jsonify({"type": "fail", "message": "Token解碼失敗"})
 
 
-def check_token(connection_pool, token):
+def check_token(token):
     sql = "SELECT * FROM token WHERE token = %s"
     return execute_query(connection_pool, sql, (token,), fetch_one=True)
 
@@ -171,13 +171,13 @@ def check_token(connection_pool, token):
 def logout():
     token = request.headers.get("Authorization")
     token = token.replace("Bearer ", "")
-    if delete_token(connection_pool, token):
+    if delete_token(token):
         return jsonify({"type": "success", "message": "登出成功"})
     else:
         return jsonify({"type": "error", "message": "登出失敗"})
 
 
-def delete_token(connection_pool, token):
+def delete_token(token):
     try:
         # 先解除刪除的安全機制
         sql_1 = "set sql_safe_updates=0"
@@ -204,7 +204,7 @@ def delete_token(connection_pool, token):
 def get_name():
     username = request.args.get("username")  # 直接取得使用者名稱字串
     """ 依據帳號，找出會員資訊 """
-    member_data = user_data(connection_pool, username)
+    member_data = user_data(username)
     member_name = member_data[1]
     return jsonify({"type": "success", "message": "登入成功", "memberName": member_name})
 
@@ -212,7 +212,7 @@ def get_name():
 """ 依據登入的帳號，找出該會員的相關資訊 """
 
 
-def user_data(connection_pool, username):
+def user_data(username):
     sql = "SELECT * FROM member WHERE username = %s"
     return execute_query(connection_pool, sql, (username,), fetch_one=True)
 
@@ -224,7 +224,7 @@ def user_data(connection_pool, username):
 @app.route('/member/get_username')
 def api_get_member():
     username = request.args.get("username")
-    member_data = get_member_by_username(connection_pool, username)
+    member_data = get_member_by_username(username)
     if member_data:
         response = {"type": "success", "message": member_data}
     else:
@@ -235,7 +235,7 @@ def api_get_member():
 """ 透過會員帳號，查詢id、name、username """
 
 
-def get_member_by_username(connection_pool, username):
+def get_member_by_username(username):
     sql = "SELECT id, name, username FROM member WHERE username = %s"
     return execute_query(connection_pool, sql, (username,), fetch_one=True)
 
@@ -251,11 +251,11 @@ def api_update_member_name():
     """ 依據帳號，找出會員資訊 """
     username = data["username"]
     new_name = data["newName"]
-    update_member_name(connection_pool, username, new_name)
+    update_member_name(username, new_name)
     return jsonify({"type": "success", "message": new_name})
 
 
-def update_member_name(connection_pool, username, new_name):
+def update_member_name(username, new_name):
     sql = "UPDATE member SET name = %s WHERE username = %s"
     execute_query(connection_pool, sql, (new_name, username), commit=True)
     return "ok"
@@ -268,7 +268,7 @@ def update_member_name(connection_pool, username, new_name):
 @app.route("/message/get_content", methods=["POST"])
 def get_content():
     """ 取得留言板功能需要的相關資訊 """
-    messages_data = get_messages(connection_pool)
+    messages_data = get_messages()
     return jsonify({"type": "success", "messagesData": messages_data})
 
 
@@ -276,7 +276,7 @@ def get_content():
 """ 找出帳號以及message.id，連接刪除留言的功能 """
 
 
-def get_messages(connection_pool):
+def get_messages():
     sql = "SELECT member.username, member.name, message.id, message.content FROM message INNER JOIN member ON message.member_id = member.id ORDER BY message.time DESC"
     return execute_query(connection_pool, sql, fetch_one=False)
 
@@ -292,17 +292,17 @@ def create_message():
     username = data["username"]
     content = data["content"]
     """ 依據登入的帳號，找出該會員的id """
-    member_data = user_data(connection_pool, username)
+    member_data = user_data(username)
     member_id = member_data[0]
     """ 依據member_id，新增留言 """
-    save_message(connection_pool, member_id, content)
+    save_message(member_id, content)
     return jsonify({"type": "success"})
 
 
 """ 新增member_id、留言內容 """
 
 
-def save_message(connection_pool, member_id, content):
+def save_message(member_id, content):
     sql = "INSERT INTO message (member_id, content) VALUES (%s, %s)"
     execute_query(connection_pool, sql, (member_id, content), commit=True)
 
@@ -313,7 +313,7 @@ def save_message(connection_pool, member_id, content):
 @app.route("/message/delete/<int:message_id>", methods=["DELETE"])
 def delete_message(message_id):
     # 透過message_id 找出使用者帳號
-    username = is_message_owner(connection_pool, message_id)[0]
+    username = is_message_owner(message_id)[0]
 
     # 判斷token的帳號是否與刪除的帳號一致
     token = request.headers.get("Authorization")
@@ -328,7 +328,7 @@ def delete_message(message_id):
         # 驗證帳號是否一致
         if decoded_token.get("username") == username:
             # 刪除留言
-            delete_message_by_id(connection_pool, message_id)
+            delete_message_by_id(message_id)
             return jsonify({"type": "success", "message": "刪除成功"})
         else:
             return jsonify({"type": "fail", "message": "刪除失敗"})
@@ -337,12 +337,12 @@ def delete_message(message_id):
         return jsonify({"type": "fail", "message": "Token過期"})
 
 
-def is_message_owner(connection_pool, message_id):
+def is_message_owner(message_id):
     sql = "SELECT member.username FROM message JOIN member ON message.member_id = member.id WHERE message.id = %s"
     return execute_query(connection_pool, sql, (message_id,), fetch_one=True)
 
 
-def delete_message_by_id(connection_pool, message_id):
+def delete_message_by_id(message_id):
     sql = "DELETE FROM message WHERE id = %s"
     execute_query(connection_pool, sql, (message_id,), commit=True)
     return "ok"
