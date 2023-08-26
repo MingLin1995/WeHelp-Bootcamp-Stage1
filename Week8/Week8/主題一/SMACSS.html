@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="SMACSS.css" />
+    <!-- <link rel="stylesheet" href="SMACSS2.css" /> -->
+    <title>CSS 選擇器的命名⽅式</title>
+  </head>
+  <body>
+    <!--  
+      SMACSS主要核心架構分為
+      1.Base 基礎 
+      2.Module 模組
+      3.Layout 佈局
+      4.State 狀態
+      5.Theme 主題
+    -->
+    <!-- Base 基礎 -->
+    <div class="header">header</div>
+    <div class="content">content</div>
+    <div class="footer">footer</div>
+    <hr />
+
+    <!-- 傳統型 -->
+    <div class="content1">content1</div>
+    <div class="content2">content2</div>
+    <div class="content3">content3</div>
+    <hr />
+    <!-- Module 模組 -->
+    <div class="content content-red">content1</div>
+    <div class="content content-green">content2</div>
+    <div class="content content-blue">content3</div>
+    <!-- <div class="content content-red">content4</div> -->
+    <hr />
+
+    <!-- Layout 佈局 -->
+    <div class="l-container header">header</div>
+    <div class="l-container content">content</div>
+    <div class="l-container footer">footer</div>
+    <hr />
+
+    <!-- State 狀態 -->
+    <button class="button" onclick="changeColor()">點我會改變顏色</button>
+
+    <!-- Theme 主題 -->
+    <!-- 比較不常使用，例如遇到不同國家的使用者，會轉改變主題、換字形等等，通常會直接用覆蓋css檔案的方式 -->
+
+    <!-- 總結：將相同的樣式，包成一包使用 -->
+
+    <script src="SMACSS.js"></script>
+  </body>
+</html>

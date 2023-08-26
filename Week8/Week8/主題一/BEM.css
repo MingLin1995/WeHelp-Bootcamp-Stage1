@@ -1,0 +1,21 @@
+/* 傳統 */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: green;
+  color: white;
+}
+.change_color {
+  background-color: yellow;
+}
+
+/* BEM */
+.content_main_button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: blue;
+  color: white;
+}
+.content_main_button--switch {
+  background-color: red;
+}

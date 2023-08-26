@@ -1,0 +1,72 @@
+/* Base 基礎：就是整個網站的預設樣式，類似CSS Reset，通常使用標籤，不使用class或id選擇器  */
+body {
+  font-size: 20px;
+}
+.header {
+  font-size: 40px; /* 有要客製化就直接覆蓋 */
+}
+
+/* 傳統型 */
+.content1 {
+  width: 180px;
+  height: 50px;
+  border: 1px solid black;
+  color: red;
+}
+.content2 {
+  width: 180px;
+  height: 50px;
+  border: 1px solid black;
+  color: green;
+}
+.content3 {
+  width: 180px;
+  height: 50px;
+  border: 1px solid black;
+  color: blue;
+}
+
+/* Module 模組（小區塊-內容）：抽出主要的樣式，跟Base不同的是，不是"初始化"，要任意更改或是套用都會更有彈性。 */
+.content {
+  width: 180px;
+  height: 50px;
+  border: 1px solid black;
+}
+
+.content-red {
+  color: red;
+}
+.content-green {
+  color: green;
+}
+.content-blue {
+  color: blue;
+}
+
+/* Layout 佈局（大區塊-框架）：統一名稱，l代表著Layout，抽出共同樣式，主要是可以減少className的命名時間，因為只用content，會不知道主要是做甚麼的 */
+.l-container {
+  width: 180px;
+  height: 50px;
+  border: 1px solid black;
+}
+.header {
+  color: red;
+}
+.content {
+  color: green;
+}
+.footer {
+  color: blue;
+}
+
+/* State 狀態：使用 .is-，通常用在狀態的切換，會搭配JS */
+/* 基本按钮样式 */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: blue;
+  color: white;
+}
+.button-is-active {
+  background-color: red;
+}

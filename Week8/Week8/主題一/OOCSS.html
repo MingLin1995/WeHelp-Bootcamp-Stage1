@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="OOCSS.css" />
+    <title>CSS 選擇器的命名⽅式</title>
+  </head>
+  <body>
+    <!-- 傳統型 -->
+    <div class="content1">content1</div>
+    <div class="content2">content2</div>
+    <div class="content3">content3</div>
+    <hr />
+
+    <!-- 
+      OOCSS主要分為
+      1.內容與容器的分離
+      2.結構與樣式的分離
+    -->
+
+    <!-- Separation of content from container - 內容與容器的分離-->
+    <div class="container content1">content1</div>
+    <div class="container content2">content2</div>
+    <div class="container content3">content3</div>
+    <hr />
+
+    <!-- Separation of structure from skin - 結構與樣式的分離-->
+    <div class="container border-black size-small1 color-red">content1</div>
+    <div class="container border-black size-medium color-green">content2</div>
+    <div class="container border-black size-large color-blue">content3</div>
+
+    <!-- 簡單的說OOCSS就是所有的class都有自己的功能，是我個人最喜歡的，因為很清楚，使用彈性也高 -->
+  </body>
+</html>

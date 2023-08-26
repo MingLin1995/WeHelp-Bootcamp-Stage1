@@ -1,0 +1,88 @@
+/* 傳統型 */
+.content1 {
+  width: 180px;
+  height: 50px;
+  font-size: 20px;
+  color: red;
+  border: 1px solid black;
+  padding: 10px;
+}
+.content2 {
+  width: 180px;
+  height: 50px;
+  font-size: 30px;
+  color: green;
+  border: 1px solid black;
+  padding: 10px;
+}
+.content3 {
+  width: 180px;
+  height: 50px;
+  font-size: 40px;
+  color: blue;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+/* 
+  Separation of content from container - 內容與容器的分離：
+  避免將內容寫死在特定容器，跟SMACSS的模組還有佈局概念很像
+*/
+
+/* 若要更改全部容器的外框就很方便 */
+.container {
+  width: 180px;
+  height: 50px;
+  border: 1px solid pink;
+  padding: 10px;
+}
+
+/*若想要新增不同樣式的內容也很方便*/
+.content1 {
+  font-size: 20px;
+  color: red;
+}
+.content2 {
+  font-size: 30px;
+  color: green;
+}
+.content3 {
+  font-size: 40px;
+  color: blue;
+}
+
+/* 
+  Separation of structure from skin - 結構與樣式的分離：
+  結構：display、padding... 樣式：color、border...
+*/
+
+.container {
+  width: 180px;
+  height: 50px;
+  padding: 10px;
+}
+
+.border-black {
+  border: 1px solid black;
+}
+
+.size-small {
+  font-size: 20px;
+}
+.color-red {
+  color: red;
+}
+
+.size-medium {
+  font-size: 30px;
+}
+.color-green {
+  color: green;
+}
+
+.size-large {
+  font-size: 40px;
+}
+.color-blue {
+  color: blue;
+}

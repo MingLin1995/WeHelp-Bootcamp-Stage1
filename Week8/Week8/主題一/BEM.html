@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="BEM.css" />
+    <title>CSS 選擇器的命名⽅式</title>
+  </head>
+  <body>
+    <!-- 傳統型 -->
+    <div class="content">
+      <ul class="main">
+        <li class="item">項目一</li>
+        <button class="button" onclick="changeColor1()">點我會改變顏色</button>
+      </ul>
+    </div>
+    <hr />
+
+    <!-- 
+        BEM：Block (區塊)、Element (元素)、Modifier (修飾符)
+        優點：非常易讀　缺點：命名長度過長 -->
+    <!-- 區塊 -->
+    <div class="content">
+      <!-- 元素 -->
+      <ul class="content_main">
+        <li class="content_main_item">項目一</li>
+        <!-- 修飾符，通常用表示狀態（看CSS、JS）-->
+        <button class="content_main_button" onclick="changeColor2()">
+          點我會改變顏色
+        </button>
+      </ul>
+    </div>
+
+    <!-- 總結：一層一層寫下來 -->
+    <script src="BEM.js"></script>
+  </body>
+</html>
